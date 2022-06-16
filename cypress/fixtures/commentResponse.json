@@ -1,0 +1,16 @@
+{
+    "comments": [
+        {
+            "id": 14299,
+            "createdAt": "2022-06-16T17:01:23.683Z",
+            "updatedAt": "2022-06-16T17:01:23.683Z",
+            "body": "autotext",
+            "author": {
+                "username": "testuser",
+                "bio": null,
+                "image": "https://api.realworld.io/images/smiley-cyrus.jpeg",
+                "following": false
+            }
+        }
+    ]
+}
