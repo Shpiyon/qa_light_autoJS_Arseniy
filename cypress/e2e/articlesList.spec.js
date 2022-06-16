@@ -1,4 +1,7 @@
 const TAGS_QUERY_URL = 'https://api.realworld.io/api/articles?limit=10&offset=0&tag=implementations';
+const LIKE_BUTTON = 'body > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > '
+  + 'div:nth-child(1) > article-list:nth-child(2) > article-preview:nth-child(1) > div:nth-child(1) > article-meta:nth-child(1) > '
+  + 'div:nth-child(1) > ng-transclude:nth-child(3) > favorite-btn:nth-child(1) > button:nth-child(1)'
 
 describe('Articles List Retrieved By Tag', () => {
   before(() => {
@@ -46,7 +49,11 @@ describe('Articles List is Dispalayed Correctly', () => {
     });
   });
 
-  it('check if article is displayed correctly', () => {
+  it('Check Update Tag is presented', () => {
+    cy.get('.tag-list').contains('update')
+  })
+
+  it.skip('check if article is displayed correctly', () => {
     cy.contains('.sidebar a', 'implementations').click();
     cy.get('@articleData').then((data) => {
       cy.contains('h1', data.title).closest('[article=article]').as('article');
@@ -54,3 +61,52 @@ describe('Articles List is Dispalayed Correctly', () => {
     });
   });
 });
+
+describe('Likes for the article', () => {
+  beforeEach(() => {
+    cy.loginDefaultUser();
+    cy.createArticle().as('article')
+    cy.get('@article').then((articlebody) => {
+      cy.wrap(articlebody.slug).as('articleSlug')
+      cy.visit('/');
+    })
+  })
+
+  it('Add like to the article', () => {
+    cy.intercept({ method: 'POST', hostname: "api.realworld.io", path: "**/articles/**" }).as('addLike')
+    cy.get('[ng-click="$ctrl.changeList({ type: \'all\' })"]').click()
+    cy.get(LIKE_BUTTON).first().click()
+    cy.wait('@addLike')
+    cy.get("@addLike").then(resp => {
+      console.log(resp)
+      expect(resp.response.body.article.favoritesCount).to.be.equal(1)
+    })
+  })
+
+  it('Remove like from the article', () => {
+    cy.intercept({ method: 'POST', hostname: "api.realworld.io", path: "**/articles/**" }).as('addLike')
+    cy.intercept({ method: 'DELETE', hostname: "api.realworld.io", path: "**/articles/**" }).as('removeLike')
+    cy.get('[ng-click="$ctrl.changeList({ type: \'all\' })"]').click()
+    cy.get(LIKE_BUTTON).first().click()
+    cy.wait('@addLike')
+    cy.get(LIKE_BUTTON).first().click()
+    cy.wait('@removeLike')
+    cy.get("@removeLike").then(resp => {
+      console.log(resp)
+      expect(resp.response.body.article.favoritesCount).to.be.equal(0)
+    })
+  })
+
+  afterEach(() => {
+    cy.get('@articleSlug').then((articleSlug) => {
+      cy.deleteArticle(articleSlug)
+      cy.request({
+        method: 'GET',
+        url: 'https://api.realworld.io/api/articles/' + articleSlug,
+        failOnStatusCode: false
+      }).then(resp => {
+        expect(resp.status).to.be.equal(404)
+      })
+    })
+  })
+})

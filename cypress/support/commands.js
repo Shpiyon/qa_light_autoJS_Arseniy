@@ -1,5 +1,6 @@
 import { generateArticle } from '../helpers/generateData';
 import { EMAIL, PASSWORD } from '../creds';
+import { isExportDeclaration } from 'typescript';
 
 // ***********************************************
 // This example commands.js shows you how to
@@ -69,3 +70,15 @@ Cypress.Commands.add('createArticle', (params) => {
     return response.body.article;
   });
 });
+
+Cypress.Commands.add('deleteArticle', (title) => {
+  cy.request({
+    method: 'DELETE',
+    url: 'https://api.realworld.io/api/articles/' + title,
+    headers: {
+      Authorization: 'Bearer ' + localStorage.getItem('jwtToken'),
+    },
+  }).then((response) => {
+    expect(response.status).to.be.equal(200)
+  })
+})
