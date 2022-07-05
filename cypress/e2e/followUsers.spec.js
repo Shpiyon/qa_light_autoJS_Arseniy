@@ -21,12 +21,9 @@ describe('Follow Users', () => {
         cy.get('[ng-bind="$ctrl.article.author.username"]').first().contains('Gerome')
         })
         cy.visit('#/@Gerome');
-        cy.get(FOLLOW_BTN).click()
     })
 
     it('Stop Following User', () => {
-        cy.get(FOLLOW_BTN).click()
-        cy.wait(4000)
         cy.intercept({ method: "DELETE", hostname: "api.realworld.io", path: "**/profiles/**" }).as('stopFollowUser')
         cy.get(FOLLOW_BTN).click()
         cy.wait('@stopFollowUser')

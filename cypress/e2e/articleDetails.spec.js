@@ -57,7 +57,7 @@ describe('Editing Article', () => {
     cy.get(COMMENT_CARD).find('.card-text.ng-binding').should('have.text', 'Comment')
     cy.get('[ng-bind="::$ctrl.data.author.username"]').should('have.text', 'autocoach')
     let today = new Date()
-    let date = today.toLocaleString('default', { month: 'long', day: "2-digit", year: 'numeric' })
+    let date = today.toLocaleString('default', { month: 'long', day: "numeric", year: 'numeric' })
     cy.get('.date-posted.ng-binding').should('have.text', date)
   })
 
