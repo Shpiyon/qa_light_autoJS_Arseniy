@@ -1,4 +1,5 @@
 const TAGS_QUERY_URL = 'https://api.realworld.io/api/articles?limit=10&offset=0&tag=implementations';
+
 const LIKE_BUTTON = 'body > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > '
   + 'div:nth-child(1) > article-list:nth-child(2) > article-preview:nth-child(1) > div:nth-child(1) > article-meta:nth-child(1) > '
   + 'div:nth-child(1) > ng-transclude:nth-child(3) > favorite-btn:nth-child(1) > button:nth-child(1)'
